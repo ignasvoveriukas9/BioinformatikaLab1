@@ -10,8 +10,8 @@ def split_sequence(sequence):
     for i in range ( 0, 3 ):
         sequences.append ( split_into_triplets ( sequence [ i: ] ) )
 
-    #for i in range ( 0, 3 ):
-     #   sequneces.add ( split_intotriplets (  )
+    for i in range ( 0, 3 ):
+        sequences.append ( split_into_triplets ( reverse_compliment (sequence) [ i: ] ) )
 
     return sequences
 
@@ -19,6 +19,10 @@ def split_into_triplets(sequence):
     triplets = []
     for i in range ( 0 , len(sequence), 3 ):
         triplets.append ( sequence [ i : i + 3 ] )
+
+    if len ( triplets [ -1 ] ) < 3:
+        del triplets [ -1 ]
+
     return triplets
 
 def reverse_compliment ( sequence ):
@@ -37,14 +41,98 @@ def reverse_compliment ( sequence ):
     else:
         return "Invalid sequence"
 
+codontab = {
+    'TCA': 'S',    # Serina
+    'TCC': 'S',    # Serina
+    'TCG': 'S',    # Serina
+    'TCT': 'S',    # Serina
+    'TTC': 'F',    # Fenilalanina
+    'TTT': 'F',    # Fenilalanina
+    'TTA': 'L',    # Leucina
+    'TTG': 'L',    # Leucina
+    'TAC': 'Y',    # Tirosina
+    'TAT': 'Y',    # Tirosina
+    'TAA': '*',    # Stop
+    'TAG': '*',    # Stop
+    'TGC': 'C',    # Cisteina
+    'TGT': 'C',    # Cisteina
+    'TGA': '*',    # Stop
+    'TGG': 'W',    # Triptofano
+    'CTA': 'L',    # Leucina
+    'CTC': 'L',    # Leucina
+    'CTG': 'L',    # Leucina
+    'CTT': 'L',    # Leucina
+    'CCA': 'P',    # Prolina
+    'CCC': 'P',    # Prolina
+    'CCG': 'P',    # Prolina
+    'CCT': 'P',    # Prolina
+    'CAC': 'H',    # Histidina
+    'CAT': 'H',    # Histidina
+    'CAA': 'Q',    # Glutamina
+    'CAG': 'Q',    # Glutamina
+    'CGA': 'R',    # Arginina
+    'CGC': 'R',    # Arginina
+    'CGG': 'R',    # Arginina
+    'CGT': 'R',    # Arginina
+    'ATA': 'I',    # Isoleucina
+    'ATC': 'I',    # Isoleucina
+    'ATT': 'I',    # Isoleucina
+    'ATG': 'M',    # Methionina
+    'ACA': 'T',    # Treonina
+    'ACC': 'T',    # Treonina
+    'ACG': 'T',    # Treonina
+    'ACT': 'T',    # Treonina
+    'AAC': 'N',    # Asparagina
+    'AAT': 'N',    # Asparagina
+    'AAA': 'K',    # Lisina
+    'AAG': 'K',    # Lisina
+    'AGC': 'S',    # Serina
+    'AGT': 'S',    # Serina
+    'AGA': 'R',    # Arginina
+    'AGG': 'R',    # Arginina
+    'GTA': 'V',    # Valina
+    'GTC': 'V',    # Valina
+    'GTG': 'V',    # Valina
+    'GTT': 'V',    # Valina
+    'GCA': 'A',    # Alanina
+    'GCC': 'A',    # Alanina
+    'GCG': 'A',    # Alanina
+    'GCT': 'A',    # Alanina
+    'GAC': 'D',    # Acido Aspartico
+    'GAT': 'D',    # Acido Aspartico
+    'GAA': 'E',    # Acido Glutamico
+    'GAG': 'E',    # Acido Glutamico
+    'GGA': 'G',    # Glicina
+    'GGC': 'G',    # Glicina
+    'GGG': 'G',    # Glicina
+    'GGT': 'G'     # Glicina
+}
+
+def turn_into_codon ( sequences ):
+    codons = [[],[],[],[],[],[]]
+    for idx, seq in enumerate ( sequences ):
+        for triplet in seq:
+            codons [idx].append ( codontab [ triplet ] )
+
+    return codons
 
 
 rez = parse_fasta('/home/ignasvoveriukas/VU/Bioinformatika/lab1/BioinformatikaLab1/bacterial1.fasta')
 
-triplets = split_into_triplets(rez)
+#triplets = split_into_triplets(rez)
 
 #print (rez)
 #print (type(rez))
 #print ( reverse_compliment(rez) )
 
-print (triplets)
+#print (triplets)
+
+finalSeq = split_sequence ( rez )
+
+#for seq in finalSeq:
+#    print (seq)
+#    print ("\r\n")
+
+codons = turn_into_codon ( finalSeq )
+
+print ( codons )
