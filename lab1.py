@@ -116,6 +116,19 @@ def turn_into_codon ( sequences ):
 
     return codons
 
+def find_proteins ( sequence ):
+    proteins = []
+
+    proteinStart = -1
+    for i in range ( 0, len ( sequence ) ):
+        if ( sequence [ i ] == 'M' and proteinStart == -1 ):
+            proteinStart = i
+        elif ( sequence [ i ] == '*' and proteinStart != -1 ):
+            if len ( sequence [ proteinStart  : i + 1 ] ) >= 33:
+                proteins.append ( sequence [ proteinStart  : i + 1 ] )
+            proteinStart = -1
+    return proteins
+
 
 rez = parse_fasta('/home/ignasvoveriukas/VU/Bioinformatika/lab1/BioinformatikaLab1/bacterial1.fasta')
 
@@ -135,4 +148,13 @@ finalSeq = split_sequence ( rez )
 
 codons = turn_into_codon ( finalSeq )
 
-print ( codons )
+#print ( codons )
+proteinsForAllSeq = []
+for seq in codons:
+    proteins = find_proteins ( seq )
+    proteinsForAllSeq.append ( proteins )
+
+
+print ( proteinsForAllSeq )
+
+
