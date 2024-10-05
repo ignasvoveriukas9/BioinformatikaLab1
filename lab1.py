@@ -125,10 +125,47 @@ def find_proteins ( sequence ):
             proteinStart = i
         elif ( sequence [ i ] == '*' and proteinStart != -1 ):
             if len ( sequence [ proteinStart  : i + 1 ] ) >= 33:
-                proteins.append ( sequence [ proteinStart  : i + 1 ] )
+                proteins.append ( sequence [ proteinStart + 1  : i ] )
             proteinStart = -1
     return proteins
 
+codonList = [ 'S', 'F', 'L', 'Y', 'C', 'W', 'P', 'H', 'Q', 'R', 'I', 'M', 'T', 'N', 'K', 'V', 'A', 'D', 'E', 'G' ]
+
+def make_codon_dic ( codonList ):
+    codonDic = {}
+    for codon in codonList:
+        codonDic [ codon ] = 0
+
+    return codonDic
+
+def make_dicodon_dic (codonList ):
+    dicodonDic = {}
+    for codon1 in codonList:
+        for codon2 in codonList:
+            dicodonDic [ codon1 + codon2 ] = 0;
+
+    return dicodonDic
+
+def calc_codon_freq ( proteinsForAllSeq ):
+    codonDic = make_codon_dic ( codonList )
+
+    for seq in proteinsForAllSeq:
+        for protein in seq:
+            for codon in protein:
+                codonDic [ codon ] += 1
+
+    return codonDic
+
+def calc_dicodon_freq ( proteinsForAllSeq ):
+    dicodonDic = make_dicodon_dic ( codonList )
+
+    for seq in proteinsForAllSeq:
+        for protein in seq:
+            for idx, codon in enumerate ( protein ):
+                if idx != ( len ( protein ) - 1 ) :
+                    dicodonDic [ codon + protein [ idx + 1] ] += 1
+
+    return dicodonDic
 
 rez = parse_fasta('/home/ignasvoveriukas/VU/Bioinformatika/lab1/BioinformatikaLab1/bacterial1.fasta')
 
@@ -155,6 +192,11 @@ for seq in codons:
     proteinsForAllSeq.append ( proteins )
 
 
-print ( proteinsForAllSeq )
+#print ( proteinsForAllSeq )
+dicodonDic = make_dicodon_dic ( codonList )
 
+codonFreq = calc_codon_freq ( proteinsForAllSeq )
+dicodonFreq = calc_dicodon_freq ( proteinsForAllSeq )
+
+print ( dicodonFreq )
 
