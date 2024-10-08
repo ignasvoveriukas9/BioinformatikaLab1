@@ -190,10 +190,13 @@ def distance_matrixes ( seqs ):
     n = len ( seqs.keys() )
     codonMatrix = np.zeros ( ( n, n ) )
     dicodonMatrix = np.zeros ( ( n, n ) )
+    nameList = []
 
     for i, key1 in enumerate ( seqs.keys() ):
 
         ( codonFreq1, dicodonFreq1 ) = seqs [ key1 ]
+
+        nameList.append ( key1 )
 
         for j, key2 in enumerate ( seqs.keys() ):
 
@@ -205,9 +208,13 @@ def distance_matrixes ( seqs ):
             codonMatrix [ i ] [ j ] = codonDist
             dicodonMatrix [ i ] [ j ] = dicodonDist
 
-    return ( codonMatrix, dicodonMatrix )
+    return ( nameList, codonMatrix, dicodonMatrix )
 
-
+def save_phylip_format ( nameList, matrix, filename ):
+    with open ( filename, 'w') as f:
+        f.write ( f"{len(nameList)}\n" )
+        for i, name in enumerate ( nameList ):
+            f.write ( f"{name} " + " ".join ( f"{val}" for val in matrix [ i ] ) + "\n" )
 
 files = [ 'bacterial1.fasta', 'bacterial2.fasta', 'bacterial3.fasta', 'bacterial4.fasta', 'mamalian1.fasta', 'mamalian2.fasta', 'mamalian3.fasta', 'mamalian4.fasta' ]
 
@@ -230,7 +237,12 @@ for file in files:
 
     seqs [ name ] = ( codonFreq, dicodonFreq )
 
-print ( distance_matrixes ( seqs ) )
+( nameList, codonMatrix, dicodonMatrix ) = distance_matrixes ( seqs )
+
+save_phylip_format ( nameList, codonMatrix, 'codonMatrix.txt' )
+save_phylip_format ( nameList, dicodonMatrix, 'dicodonMatrix.txt' )
+
+#print ( distance_matrixes ( seqs ) )
 
 #print ( seqs )
 
