@@ -1,4 +1,5 @@
 from Bio import SeqIO
+import numpy as np
 
 def parse_fasta(file):
     for record in SeqIO.parse(file, "fasta"):
@@ -142,30 +143,48 @@ def make_dicodon_dic (codonList ):
     dicodonDic = {}
     for codon1 in codonList:
         for codon2 in codonList:
-            dicodonDic [ codon1 + codon2 ] = 0;
+            dicodonDic [ codon1 + codon2 ] = 0
 
     return dicodonDic
 
 def calc_codon_freq ( proteinsForAllSeq ):
     codonDic = make_codon_dic ( codonList )
+    codonCount = 0
 
     for seq in proteinsForAllSeq:
         for protein in seq:
             for codon in protein:
                 codonDic [ codon ] += 1
+                codonCount += 1
+
+    for codon in codonList:
+        codonDic [ codon ] = codonDic [ codon ] / codonCount
 
     return codonDic
 
 def calc_dicodon_freq ( proteinsForAllSeq ):
     dicodonDic = make_dicodon_dic ( codonList )
+    dicodonCount = 0
 
     for seq in proteinsForAllSeq:
         for protein in seq:
             for idx, codon in enumerate ( protein ):
                 if idx != ( len ( protein ) - 1 ) :
                     dicodonDic [ codon + protein [ idx + 1] ] += 1
+                    dicodonCount += 1
+
+    for ( key, value ) in dicodonDic.items():
+        dicodonDic [ key ] = value / dicodonCount
 
     return dicodonDic
+
+def euclidean_distance ( dic1, dic2 ):
+    sum_sq_diff = 0.0
+
+    for key in dic1.keys():
+        sum_sq_diff += ( dic1 [ key ] - dic2 [ key ] ) ** 2
+
+    return np.sqrt ( sum_sq_diff )
 
 rez = parse_fasta('/home/ignasvoveriukas/VU/Bioinformatika/lab1/BioinformatikaLab1/bacterial1.fasta')
 
@@ -198,5 +217,7 @@ dicodonDic = make_dicodon_dic ( codonList )
 codonFreq = calc_codon_freq ( proteinsForAllSeq )
 dicodonFreq = calc_dicodon_freq ( proteinsForAllSeq )
 
-print ( dicodonFreq )
+#print ( dicodonFreq )
+
+#print ( euclidean_distance ( codonFreq, codonFreq ) )
 
