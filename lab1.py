@@ -3,7 +3,7 @@ import numpy as np
 
 def parse_fasta(file):
     for record in SeqIO.parse(file, "fasta"):
-        return str(record.seq).upper()
+        return ( record.id, str(record.seq).upper() )
 
 def split_sequence(sequence):
     sequences = []
@@ -186,36 +186,84 @@ def euclidean_distance ( dic1, dic2 ):
 
     return np.sqrt ( sum_sq_diff )
 
-rez = parse_fasta('/home/ignasvoveriukas/VU/Bioinformatika/lab1/BioinformatikaLab1/bacterial1.fasta')
+def distance_matrixes ( seqs ):
+    n = len ( seqs.keys() )
+    codonMatrix = np.zeros ( ( n, n ) )
+    dicodonMatrix = np.zeros ( ( n, n ) )
+
+    for i, key1 in enumerate ( seqs.keys() ):
+
+        ( codonFreq1, dicodonFreq1 ) = seqs [ key1 ]
+
+        for j, key2 in enumerate ( seqs.keys() ):
+
+            ( codonFreq2, dicodonFreq2 ) = seqs [ key2 ]
+
+            codonDist = euclidean_distance ( codonFreq1, codonFreq2 )
+            dicodonDist = euclidean_distance ( dicodonFreq1, dicodonFreq2 )
+            
+            codonMatrix [ i ] [ j ] = codonDist
+            dicodonMatrix [ i ] [ j ] = dicodonDist
+
+    return ( codonMatrix, dicodonMatrix )
+
+
+
+files = [ 'bacterial1.fasta', 'bacterial2.fasta', 'bacterial3.fasta', 'bacterial4.fasta', 'mamalian1.fasta', 'mamalian2.fasta', 'mamalian3.fasta', 'mamalian4.fasta' ]
+
+seqs = {}
+
+for file in files:
+    (name, seq) = parse_fasta ( file )
+
+    splitSeqs = split_sequence ( seq )
+
+    codons = turn_into_codon ( splitSeqs )
+
+    proteinsForAllSplits = []
+    for split in codons:
+        proteins = find_proteins ( split )
+        proteinsForAllSplits.append ( proteins )
+
+    codonFreq = calc_codon_freq ( proteinsForAllSplits )
+    dicodonFreq = calc_dicodon_freq ( proteinsForAllSplits )
+
+    seqs [ name ] = ( codonFreq, dicodonFreq )
+
+print ( distance_matrixes ( seqs ) )
+
+#print ( seqs )
+
+
+#(idd, rez) = parse_fasta('bacterial1.fasta')
 
 #triplets = split_into_triplets(rez)
 
-#print (rez)
 #print (type(rez))
 #print ( reverse_compliment(rez) )
 
 #print (triplets)
 
-finalSeq = split_sequence ( rez )
+#finalSeq = split_sequence ( rez )
 
 #for seq in finalSeq:
 #    print (seq)
 #    print ("\r\n")
 
-codons = turn_into_codon ( finalSeq )
+#codons = turn_into_codon ( finalSeq )
 
 #print ( codons )
-proteinsForAllSeq = []
-for seq in codons:
-    proteins = find_proteins ( seq )
-    proteinsForAllSeq.append ( proteins )
+#proteinsForAllSeq = []
+#for seq in codons:
+    #proteins = find_proteins ( seq )
+    #proteinsForAllSeq.append ( proteins )
 
 
 #print ( proteinsForAllSeq )
-dicodonDic = make_dicodon_dic ( codonList )
+#dicodonDic = make_dicodon_dic ( codonList )
 
-codonFreq = calc_codon_freq ( proteinsForAllSeq )
-dicodonFreq = calc_dicodon_freq ( proteinsForAllSeq )
+#codonFreq = calc_codon_freq ( proteinsForAllSeq )
+#dicodonFreq = calc_dicodon_freq ( proteinsForAllSeq )
 
 #print ( dicodonFreq )
 
