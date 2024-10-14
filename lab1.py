@@ -233,7 +233,14 @@ for file in files:
         proteinsForAllSplits.append ( proteins )
 
     codonFreq = calc_codon_freq ( proteinsForAllSplits )
+    print ( name )
+    max_key = max ( codonFreq, key = codonFreq.get )
+    max_value = codonFreq [ max_key ]
+    print ( 'codon: ' + str(max_key) + ' ' + str(max_value) )
     dicodonFreq = calc_dicodon_freq ( proteinsForAllSplits )
+    max_key = max ( dicodonFreq, key = dicodonFreq.get )
+    max_value  = dicodonFreq [ max_key ]
+    print ( 'dicodon: ' + str(max_key) + ' ' + str(max_value) )
 
     seqs [ name ] = ( codonFreq, dicodonFreq )
 
